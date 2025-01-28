@@ -3,19 +3,17 @@ import { BaileysProvider as Provider } from '@builderbot/provider-baileys'
 
 const PORT = process.env.PORT ?? 3008
 
-import { chat } from './scripts/gemini'
+import { readSheet, writeToSheet } from './scripts/sheets'
 
 
 
 const welcomeFlow = addKeyword<Provider, Database>(['hi', 'hello', 'hola'])
-    .addAnswer(`🙌 Hello welcome to this *Chatbot*`)
     .addAnswer("Prueba con tu consulta",
-        { delay: 800, capture: true },
+         null ,
         async (ctx, ctxFn) => {
-            const prompt = "eres un asistente virtual"
-            const txt = ctx.body
-            const response = await chat(prompt, txt)
-            await ctxFn.flowDynamic(response)
+          await writeToSheet([['Mensaje', 'Usuario', ctx.body]], 'Sheet1!A1:J10')
+          const response = await readSheet();
+          console.log(response)
         }
     )
         

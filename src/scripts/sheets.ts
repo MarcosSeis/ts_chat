@@ -1,31 +1,7 @@
 import dotenv from 'dotenv';
-import fs from 'fs';
 import { GaxiosResponse } from 'gaxios';
 import { google, sheets_v4 } from 'googleapis';
-import path from 'path';
 dotenv.config();
-
-const googleCredentials = JSON.parse(process.env.GEMINI_API_KEY);
-
-if (!googleCredentials) {
-    throw new Error('GOOGLE_JSON environment variable is not defined');
-}
-
-// Ruta al archivo google.json
-const googleJsonPath = path.join(process.cwd(), 'google.json');
-
-// Verifica si el archivo google.json existe, si no, lo crea
-if (!fs.existsSync(googleJsonPath)) {
-    try {
-        fs.writeFileSync(googleJsonPath, JSON.stringify(googleCredentials, null, 2));
-        console.log('google.json file created successfully.');
-    } catch (error) {
-        throw new Error(`Failed to write google.json file: ${error.message}`);
-    }
-} else {
-    console.log('google.json file already exists.');
-}
-
 
 // Inicializa la librería cliente de Google y configura la autenticación con credenciales de la cuenta de servicio.
 const auth = new google.auth.GoogleAuth({
@@ -34,7 +10,7 @@ const auth = new google.auth.GoogleAuth({
 });
 
 
-const spreadsheetId = process.env.SPREADSHEETID
+const spreadsheetId = process.env.SPREDSHEETID
 
 // Función asíncrona para escribir datos en una hoja de cálculo de Google.
 async function writeToSheet(values: any[][], range: string): Promise<GaxiosResponse<sheets_v4.Schema$UpdateValuesResponse> | void> {
