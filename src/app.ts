@@ -1,19 +1,23 @@
-import { addKeyword, createBot, createFlow, createProvider, MemoryDB as Database } from '@builderbot/bot'
+import { addKeyword, createBot, createFlow, createProvider, MemoryDB as Database, EVENTS } from '@builderbot/bot'
 import { BaileysProvider as Provider } from '@builderbot/provider-baileys'
 
 const PORT = process.env.PORT ?? 3008
 
 import { readSheet, writeToSheet } from './scripts/sheets'
+import { dateAvailable, addReservation } from './scripts/utils'
 
 
-
-const welcomeFlow = addKeyword<Provider, Database>(['hi', 'hello', 'hola'])
-    .addAnswer("Prueba con tu consulta",
+const welcomeFlow = addKeyword<Provider, Database>(EVENTS.WELCOME)
+    .addAnswer("Prueba date ",
          null ,
         async (ctx, ctxFn) => {
-          await writeToSheet([['Mensaje', 'Usuario', ctx.body]], 'Sheet1!A1:J10')
-          const response = await readSheet();
-          console.log(response)
+            const date = new Date('2025-02-10T13:00:00Z')
+            const response = await dateAvailable(date)
+            console.log(response)
+            if(response){
+                const r = await addReservation(date, "pruebaChatbot")
+                console.log(r)
+            }
         }
     )
         
